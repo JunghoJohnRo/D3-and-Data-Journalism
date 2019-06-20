@@ -1,6 +1,6 @@
 // @TODO: YOUR CODE HERE!
-var svgWidth = 700;
-var svgHeight = 500;
+var svgWidth = 800;
+var svgHeight = 600;
 
 var margin = {
   top: 60,
@@ -37,11 +37,17 @@ d3.csv(csvFile)
 
     // Creating scale functions
     var xLinearScale= d3.scaleLinear()
-      .domain([8.1, d3.max(newsData, d => d.poverty)])
+      .domain([
+        d3.min(newsData, d => d.poverty)*0.9, 
+        d3.max(newsData, d => d.poverty)*1.1
+      ])
       .range([0, width]);
 
     var yLinearScale = d3.scaleLinear()
-      .domain([4.1, d3.max(newsData, d => d.healthcare)])
+      .domain([
+        d3.min(newsData, d => d.healthcare)*0.9,
+        d3.max(newsData, d => d.healthcare)*1.1
+      ])
       .range([height, 0]);
 
     // Creating axis functions
@@ -64,9 +70,7 @@ d3.csv(csvFile)
       .attr("cx", d => xLinearScale(d.poverty))
       .attr("cy", d => yLinearScale(d.healthcare))
       .attr("r", "10")
-      .attr("fill", "lightblue")
-      .attr("stroke-width", "1")
-      .attr("stroke", "gray");
+      .attr("fill", "lightblue");
 
     // Adding State Abbreviation Text to the Circles
     chartGroup.selectAll()
@@ -79,12 +83,12 @@ d3.csv(csvFile)
       .style("font-size", "10px")
       .style("text-anchor", "middle")
       .style("font-weight", "700")
-      .style('fill', 'white');
+      .style('fill', 'black');
 
     // Initialize tool tip
     var tooltip = d3.tip()
       .attr("class", "tooltip")
-      .offset([80, -60])
+      .offset([35, -75])
       .html(function(d) {
         return(`${d.state}<br>Poverty: ${d.poverty}%<br>Healthcare: ${d.healthcare}%`);
       });
@@ -95,9 +99,11 @@ d3.csv(csvFile)
     // Creating event listeners to display and hide the tooltip
     circlesGroup.on("mouseover", function(d) {
       tooltip.show(d, this);
+      d3.select(this).style("stroke", "black");
     })
       .on("mouseout", function(d) {
         tooltip.hide(d);
+        d3.select(this).style("stroke", "white");
       });
 
     // Creating axes labels
